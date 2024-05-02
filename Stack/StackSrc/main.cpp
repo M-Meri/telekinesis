@@ -16,5 +16,9 @@ int main()
     std::cout << st3 << std::endl; // 3 2 1
     std::cout << st3.top() << std::endl; // 3
     std::cout << st3.peek(2) << std::endl; // 1
+
+    Stack<int> st4;
+    std::cin >> st4;
+    std::cout << st4 << std::endl;
     return 0;
 }
