@@ -1,3 +1,0 @@
-/home/meri/telekinesis/Stack/build/CMakeFiles/Stack.dir
-/home/meri/telekinesis/Stack/build/CMakeFiles/edit_cache.dir
-/home/meri/telekinesis/Stack/build/CMakeFiles/rebuild_cache.dir
