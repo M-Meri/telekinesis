@@ -10,9 +10,9 @@ class MyString
     public:
     using size_type = size_t;
     public:
-    MyString(); //
-    MyString(size_type); //
-    MyString(const char*); //
+    MyString(); 
+    MyString(size_type); 
+    MyString(const char*); 
     MyString(const MyString&);
     MyString(MyString&&);
 
@@ -22,30 +22,30 @@ class MyString
     ~MyString();
 
     public:
-    void append(char);//
-    void append(const MyString&);//
-    void append(const char*);//
-    void insert(size_type, char); //
-    void insert(size_type, const char*); //
-    void insert(size_type, const MyString&);//
-    void erase(size_type, size_type);//
-    void replace(const MyString&, const MyString&, size_type start = 0);//
-    void replace(const char*, const char*, size_type start = 0);//
+    void append(char);
+    void append(const MyString&);
+    void append(const char*);
+    void insert(size_type, char); 
+    void insert(size_type, const char*); 
+    void insert(size_type, const MyString&);
+    void erase(size_type, size_type);
+    void replace(const MyString&, const MyString&, size_type start = 0);
+    void replace(const char*, const char*, size_type start = 0);
     void replaceAll(const MyString&, const MyString&);
     void replaceAll(const char*, const char*);
-    void reverse();//
+    void reverse();
 
-    char& at(size_type) const;//
-    char& operator[](size_type) const;//
+    char& at(size_type) const;
+    char& operator[](size_type) const;
 
-    size_type length() const;//
-    bool empty() const;//
+    size_type length() const;
+    bool empty() const;
 
-    void clear();//
-    void resize(size_type);//
+    void clear();
+    void resize(size_type);
     void swap(MyString&);
 
-    int find(const MyString&, size_type start = 0) const;//
+    int find(const MyString&, size_type start = 0) const;
     int find(char, size_type start = 0) const;
     int find(const char*, size_type start = 0) const;
     int rfind(const MyString&)const;
@@ -86,7 +86,7 @@ const MyString<Allocator>& operator+(const MyString<Allocator>&, char);
 template <typename Allocator>
 const MyString<Allocator>& operator*(const MyString<Allocator>&, size_t);
 template <typename Allocator>
-std::ostream& operator<<(std::ostream&, const MyString<Allocator>&);//
+std::ostream& operator<<(std::ostream&, const MyString<Allocator>&);
 
 #include "../StringSrc/myString.hpp"
 

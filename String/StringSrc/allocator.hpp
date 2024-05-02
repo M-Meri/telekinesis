@@ -5,25 +5,47 @@
 
 char* allocator::allocate(size_type count)
 {
-    if(count <= 16)
+    if(count <= N/2)
     {
-        int plus = flag * N/4;
-        if(flag == 3)
+        if(flag == 1)
         {
-            flag = 0;
-        } else {
             ++flag;
+            return storage;
         }
-        return storage + plus;
+        else if(flag == 2)
+        {
+            ++flag;
+            return storage + N/2;
+        }
+        else if(flag == 3)
+        {
+            return static_cast<char*>(::operator new(count));
+        }
+        else if(flag == 4)
+        {
+            flag = 3;
+            return storage;
+        }
+        else if(flag == 5)
+        {
+            flag = 3;
+            return storage + N/2;
+        }
     }
     return static_cast<char*>(::operator new(count));
 }
 
 void allocator::deallocate(char* ptr, size_type)
 {
-    if(storage != ptr && storage +(N/4) != ptr && storage +(N/2) != ptr && storage + 3 * (N/4) != ptr)
+    if(storage != ptr && storage +(N/2) != ptr)
     {
         ::operator delete(ptr); 
+    }
+    else if(ptr == storage){
+        flag = 4;
+    }
+    else {
+        flag = 5;
     }
 }
 
@@ -39,7 +61,7 @@ void allocator::destroy(char* ptr)
 
 allocator::size_type allocator::maxsize()
 {
-    return static_cast<size_type> (N) / 4;
+    return static_cast<size_type> (N) / 2;
 }
 
 #endif

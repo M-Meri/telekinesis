@@ -1,11 +1,12 @@
 #ifndef __ALLOCATOR_H
 #define __ALLOCATOR_H
 
-const int N = 64;
+const int N = 32;
 char storage[N];
+int flag = 1;
 class allocator
 {
-    public:
+    public: 
     using size_type = size_t;
     char* allocate(size_type);
     void deallocate(char* ptr, size_type a = 0);
@@ -14,7 +15,6 @@ class allocator
 
     size_type maxsize();
 
-    int flag = 0;
 };
 
 #include "../StringSrc/allocator.hpp"
