@@ -55,9 +55,7 @@ void allocator::construct(char* ptr, char a)
 }
 
 void allocator::destroy(char* ptr)
-{
-    std::destroy_at(ptr);
-}
+{}
 
 allocator::size_type allocator::maxsize()
 {
