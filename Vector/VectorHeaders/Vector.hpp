@@ -195,7 +195,10 @@ void vector<T, Allocator>::remove(size_type index){
 
 template <typename T, typename Allocator>
 void vector<T, Allocator>::clear(){
-	allocator.destroy(arr);
+	for(size_type i = 0; i < size; ++i)
+	{
+		allocator.destroy(arr);
+	}
 	allocator.deallocate(arr);
 	arr = nullptr;
 	cap = 0;
