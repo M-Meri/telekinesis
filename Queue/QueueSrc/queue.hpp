@@ -77,6 +77,24 @@ Queue<T, Container>::reference Queue<T, Container>::front()
 }
 
 template <typename T, typename Container>
+Queue<T, Container>::const_reference Queue<T, Container>::front() const
+{
+    return queue[0];
+}
+
+template <typename T, typename Container>
+Queue<T, Container>::reference Queue<T, Container>::back()
+{
+    return queue[size() - 1];
+}
+
+template <typename T, typename Container>
+Queue<T, Container>::const_reference Queue<T, Container>::back() const
+{
+    return queue[size() - 1];
+}
+
+template <typename T, typename Container>
 Queue<T, Container>::const_reference Queue<T, Container>::at(size_type index) const
 {
     if(index < size())
@@ -92,16 +110,22 @@ Queue<T, Container>::reference Queue<T, Container>::operator[](size_type index)
     return queue[index];
 }
 
-template <typename T, typename Container = std::vector<T>>
-bool operator==(const Queue<T, Container>& lhv, const Queue<T, Container>& rhv)
+template <typename T, typename Container>
+Queue<T, Container>::const_reference Queue<T, Container>::operator[](size_type index) const
 {
-    if(lhv.size() != rhv.size())
+    return queue[index];
+}
+
+template <typename T, typename Container>
+bool Queue<T, Container>::operator==(const Queue& rhv) const
+{
+    if(size() != rhv.size())
     {
         return false;
     }
-    for(size_t i = 0; i < lhv.size(); ++i)
+    for(size_t i = 0; i < size(); ++i)
     {
-        if(lhv.at(i) != rhv.at(i))
+        if(at(i) != rhv.at(i))
         {
             return false;
         }
@@ -109,10 +133,49 @@ bool operator==(const Queue<T, Container>& lhv, const Queue<T, Container>& rhv)
     return true;
 }
 
-template <typename T, typename Container = std::vector<T>>
-bool operator!=(const Queue<T, Container>& lhv, const Queue<T, Container>& rhv)
+template <typename T, typename Container>
+bool Queue<T, Container>::operator!=(const Queue<T, Container>& rhv) const
 {
-    return !(lhv == rhv);
+    return !(*this == rhv);
+}
+
+template <typename T, typename Container>
+bool Queue<T, Container>::operator>=(const Queue& other) const
+{
+    if(size() < other.size())
+    {
+        return false;
+    }
+    if(size() > other.size())
+    {
+        return true;
+    }
+    for(size_type i = 0; i < size(); ++i)
+    {
+        if(queue[i] <  other[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <typename T, typename Container>
+bool Queue<T, Container>::operator>(const Queue<T, Container>& other) const
+{
+    return (*this >= other) && (*this != other);
+}
+
+template <typename T, typename Container>
+bool Queue<T, Container>::operator<=(const Queue& other) const
+{
+    return !(*this > other);
+}
+
+template <typename T, typename Container>
+bool Queue<T, Container>::operator<(const Queue& other) const
+{
+    return !(*this >= other);
 }
 
 template <typename T, typename Container = std::vector<T>>

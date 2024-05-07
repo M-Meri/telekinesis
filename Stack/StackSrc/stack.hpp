@@ -2,32 +2,32 @@
 #define __STACK_HPP
 
 #include <initializer_list>
-#include <vector>
+#include <deque>
 #include <iostream>
 #include "../StackHdr/stack.h"
 
-template <typename T>
-Stack<T>::Stack() : st{}
+template <typename T, typename Container>
+Stack<T, Container>::Stack() : st{}
 {}
 
-template <typename T>
-Stack<T>::Stack(const std::initializer_list<value_type>& init) : st{init}
+template <typename T, typename Container>
+Stack<T, Container>::Stack(const std::initializer_list<value_type>& init) : st{init}
 {}
 
-template <typename T>
-Stack<T>::Stack(const Stack& rhv) : st{rhv.st}
+template <typename T, typename Container>
+Stack<T, Container>::Stack(const Stack& rhv) : st{rhv.st}
 {}
 
-template <typename T>
-Stack<T>::Stack(Stack&& rhv) : st{std::forward(rhv)}
+template <typename T, typename Container>
+Stack<T, Container>::Stack(Stack&& rhv) : st{std::forward(rhv)}
 {}
 
-template <typename T>
-Stack<T>::~Stack()
+template <typename T, typename Container>
+Stack<T, Container>::~Stack()
 {}
 
-template <typename T>
-const Stack<T>& Stack<T>::operator=(const Stack& rhv)
+template <typename T, typename Container>
+const Stack<T, Container>& Stack<T, Container>::operator=(const Stack& rhv)
 {
     if(this != &rhv){
         st = rhv.st;
@@ -35,8 +35,8 @@ const Stack<T>& Stack<T>::operator=(const Stack& rhv)
     return *this;
 }
 
-template <typename T>
-const Stack<T>& Stack<T>::operator=(Stack&& rhv)
+template <typename T, typename Container>
+const Stack<T, Container>& Stack<T, Container>::operator=(Stack&& rhv)
 {
     if(this != &rhv)
     {
@@ -45,14 +45,14 @@ const Stack<T>& Stack<T>::operator=(Stack&& rhv)
     return *this;
 }
 
-template <typename T>
-void Stack<T>::push(const_reference val)
+template <typename T, typename Container>
+void Stack<T, Container>::push(const_reference val)
 {
     st.push_back(val);
 }
 
-template <typename T>
-void Stack<T>::pop()
+template <typename T, typename Container>
+void Stack<T, Container>::pop()
 {
     if(!empty())
     {
@@ -60,46 +60,64 @@ void Stack<T>::pop()
     }
 }
 
-template <typename T>
-Stack<T>::reference Stack<T>::top()
+template <typename T, typename Container>
+Stack<T, Container>::reference Stack<T, Container>::top()
 {
     return st[st.size() - 1];
 }
 
-template <typename T>
-bool Stack<T>::empty() const
+template <typename T, typename Container>
+Stack<T, Container>::const_reference Stack<T, Container>::top() const
+{
+    return st[st.size() - 1];
+}
+
+template <typename T, typename Container>
+bool Stack<T, Container>::empty() const
 {
     return st.size() == 0;
 }
 
-template <typename T>
-Stack<T>::size_type Stack<T>::size() const
+template <typename T, typename Container>
+Stack<T, Container>::size_type Stack<T, Container>::size() const
 {
     return st.size();
 }
 
-template <typename T>
-Stack<T>::reference Stack<T>::peek(size_type index)
+template <typename T, typename Container>
+Stack<T, Container>::reference Stack<T, Container>::peek(size_type index)
 {
     return st.at(size() - 1 - index);
 }
 
-template <typename T>
-Stack<T>::reference Stack<T>::operator[](size_type index)
+template <typename T, typename Container>
+Stack<T, Container>::const_reference Stack<T, Container>::peek(size_type index) const
+{
+    return st.at(size() - 1 - index);
+}
+
+template <typename T, typename Container>
+Stack<T, Container>::reference Stack<T, Container>::operator[](size_type index)
 {
     return peek(index);
 }
 
-template <typename T>
-bool operator==(const Stack<T>& first, const Stack<T>& second)
+template <typename T, typename Container>
+Stack<T, Container>::const_reference Stack<T, Container>::operator[](size_type index) const
 {
-    if(first.size() != second.size())
+    return peek(index);
+}
+
+template <typename T, typename Container>
+bool Stack<T, Container>::operator==(const Stack<T, Container>& other) const
+{
+    if(size() != other.size())
     {
         return false;
     }
-    for(size_t i = 0; i < first.size(); ++i)
+    for(size_type i = 0; i < size(); ++i)
     {
-        if(first[i] != second[i])
+        if((*this)[i] != other[i])
         {
             return false;
         }
@@ -107,10 +125,64 @@ bool operator==(const Stack<T>& first, const Stack<T>& second)
     return true;
 }
 
-template <typename T>
-bool operator!=(const Stack<T>& lhv, const Stack<T>& rhv)
+template <typename T, typename Container>
+bool Stack<T, Container>::operator>(const Stack& other) const
 {
-    return !(lhv == rhv);
+    if(size() > other.size())
+    {
+        return true;
+    }
+    if(size() < other.size())
+    {
+        return false;
+    }
+    for(size_type i = 0; i < size(); ++i)
+    {
+        if((*this)[i] < other[i])
+        {
+            return false;
+        }
+    }
+    return (*this != other);
+}
+
+template <typename T, typename Container>
+bool Stack<T, Container>::operator>=(const Stack& other) const
+{
+    return (*this == other) || (*this > other );
+}
+
+template <typename T, typename Container>
+bool Stack<T, Container>::operator<=(const Stack& other) const
+{
+    return (*this == other) || (*this < other );
+}
+
+template <typename T, typename Container>
+bool Stack<T, Container>::operator<(const Stack& other) const
+{
+    if(size() < other.size())
+    {
+        return true;
+    }
+    if(size() > other.size())
+    {
+        return false;
+    }
+    for(size_type i = 0; i < size(); ++i)
+    {
+        if((*this)[i] > other[i])
+        {
+            return false;
+        }
+    }
+    return (*this != other);
+}
+
+template <typename T, typename Container>
+bool Stack<T, Container>::operator!=(const Stack& other) const
+{
+    return !(*this == other);
 }
 
 template <typename T>

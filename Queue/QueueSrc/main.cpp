@@ -22,6 +22,8 @@ int main()
     Queue<int> q3 = {1,2,3,4,5};
     q3.front() = 10;
     std::cout << q3 << std::endl; // 10 2 3 4 5
+    q3.back() = 8;
+    std::cout << q3 << std::endl; // 10 2 3 4 8
     Queue<int> q4;
     std::cin >> q4;
     std::cout << q4 << std::endl;

@@ -1,11 +1,11 @@
 #ifndef _QUEUE_H
 #define _QUEUE_H
 
-#include <vector>
+#include <deque>
 #include <initializer_list>
 #include <iostream>
 
-template <typename T, typename Container = std::vector<T>>
+template <typename T, typename Container = std::deque<T>>
 class Queue
 {
     public:
@@ -14,7 +14,7 @@ class Queue
     using reference = value_type&;
     using const_reference = const value_type&;
     using pointer = value_type*;
-    using const_pointer = value_type* const;
+    using const_pointer = const value_type*;
     using container_type = Container;
 
     public:
@@ -22,6 +22,8 @@ class Queue
     Queue(const std::initializer_list<value_type>&);
     Queue(const Queue&);
     Queue(Queue&&);
+   //template <typename InputIt>
+   //Queue(InputIt, InputIt);
     ~Queue();
 
     const Queue& operator=(const Queue&);
@@ -34,19 +36,24 @@ class Queue
     void pop();
     size_type size() const;
     reference front();
+    const_reference front() const;
+    reference back();
+    const_reference back() const;
     const_reference at(size_type) const;
 
     reference operator[](size_type);
-    
+    const_reference operator[](size_type) const;
+    bool operator==(const Queue&) const;
+    bool operator!=(const Queue&) const;
+    bool operator<(const Queue&) const;
+    bool operator<=(const Queue&) const;
+    bool operator>(const Queue&) const;
+    bool operator>=(const Queue&) const;
 
     private:
     container_type queue;
 };
 
-template <typename T, typename Container = std::vector<T>>
-bool operator==(const Queue<T, Container>&, const Queue<T, Container>&);
-template <typename T, typename Container = std::vector<T>>
-bool operator!=(const Queue<T, Container>&, const Queue<T, Container>&);
 template <typename T, typename Container = std::vector<T>>
 std::istream& operator>>(std::istream&, Queue<T, Container>&);
 template <typename T, typename Container = std::vector<T>>

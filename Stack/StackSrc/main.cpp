@@ -19,6 +19,16 @@ int main()
 
     Stack<int> st4;
     std::cin >> st4;
-    std::cout << st4 << std::endl;
+    std::cout << st4 << std::endl; 
+
+    Stack<int> st6 = {2, 3, 4};
+    std::cout << st6 << std::endl; 
+    Stack<int> st5 = st6;
+    std::cout << st5 << std::endl; 
+    std::cout << std::boolalpha << (st5 == st6) << std::endl; // 1
+    st5[0] = 89;
+    std::cout << (st5 > st6) << std::endl; // 1
+    std::cout << std::noboolalpha << st5 << std::endl; // 89 3 2
+     
     return 0;
 }
