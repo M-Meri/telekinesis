@@ -181,6 +181,7 @@ bool Queue<T, Container>::operator<(const Queue& other) const
 template <typename T, typename Container = std::vector<T>>
 std::istream& operator>>(std::istream& in, Queue<T, Container>& q)
 {
+    q.clear();
     T newval;
     while(in >> newval)
     {

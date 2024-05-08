@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <initializer_list>
+#include <iomanip>
 #include "../SpreadSheetHdrs/spread_sheet.h"
 
 SpreadSheet::SpreadSheet():cells{nullptr}, x{0}, y{0}
@@ -37,7 +38,7 @@ SpreadSheet::SpreadSheet(size_type row, size_type col, const Cell& val)
     }
 }
 
-SpreadSheet::SpreadSheet(size_type row, std::initializer_list<const Cell>& init)
+SpreadSheet::SpreadSheet(size_type row, std::initializer_list<Cell>& init)
     :cells{new Cell*[row]}, x{row}, y{init.size()}
 {
     for(size_type i = 0; i < x; ++i)
@@ -77,7 +78,7 @@ SpreadSheet::~SpreadSheet()
     clear();
 }
 
-void SpreadSheet::clear()
+void SpreadSheet::clear() noexcept
 {
     for(size_type i = 0; i < x; ++i)
     {
@@ -132,6 +133,16 @@ const Cell& SpreadSheet::at(size_type row, size_type col) const
     return cells[row][col];
 }
 
+SpreadSheet::Row SpreadSheet::operator[](size_type row)
+{
+    return Row(cells[row]);
+}
+
+const SpreadSheet::Row SpreadSheet::operator[](size_type row) const
+{
+    return Row(cells[row]);
+}
+
 void SpreadSheet::add_row(size_type index, const Cell& val)
 {
     if(index > x)
@@ -173,7 +184,7 @@ void SpreadSheet::add_row(size_type index, const Cell& val)
     tmp = nullptr;
 }
 
-void SpreadSheet::add_colum(size_type index, const Cell& val)
+void SpreadSheet::add_col(size_type index, const Cell& val)
 {
     if(index > x)
     {
@@ -243,7 +254,7 @@ void SpreadSheet::resize_row(size_type add)
     tmp = nullptr;
 }
 
-void SpreadSheet::resize_colum(size_type add)
+void SpreadSheet::resize_col(size_type add)
 {
     if(add <= y)
     {
@@ -270,7 +281,7 @@ void SpreadSheet::resize_colum(size_type add)
 void SpreadSheet::resize(size_type row, size_type col)
 {
     resize_row(row);
-    resize_colum(col);
+    resize_col(col);
 }
 
 void SpreadSheet::delete_row(size_type row)
@@ -287,7 +298,23 @@ void SpreadSheet::delete_row(size_type row)
     --x;
 }
 
-void SpreadSheet::delete_colum(size_type col)
+void SpreadSheet::removeRows(std::initializer_list<size_type> rows)
+{
+    for(size_type row : rows)
+    {
+        delete_row(row);
+    }
+}
+
+void SpreadSheet::removeCols(std::initializer_list<size_type> cols)
+{
+    for(size_type col : cols)
+    {
+        delete_col(col);
+    }
+}
+
+void SpreadSheet::delete_col(size_type col)
 {
     if(col >= y)
     {
@@ -320,21 +347,73 @@ SpreadSheet SpreadSheet::slice(size_type from, size_type count)
     return tmp;
 }
 
+SpreadSheet SpreadSheet::slice(std::initializer_list<size_type> rows, std::initializer_list<size_type> cols) const
+{
+    SpreadSheet tmp{rows.size(), cols.size()};
+    size_type i  = 0;
+    for(size_type row : rows)
+    {
+        size_type j = 0;
+        for(size_type col : cols)
+        {
+            tmp[i][j++] = (*this)[row][col];
+        }
+        ++i;
+    }
+    return tmp;
+}
+
 SpreadSheet::size_type SpreadSheet::row() const
 {
     return x;
 }
 
-SpreadSheet::size_type SpreadSheet::colum() const
+SpreadSheet::size_type SpreadSheet::column() const
 {
     return y;
+}
+
+SpreadSheet::Row::Row(Cell* ptr): ptr{ptr}
+{}
+
+Cell& SpreadSheet::Row::operator[](size_t col)
+{
+    return ptr[col];
+}
+
+const Cell& SpreadSheet::Row::operator[](size_t col) const
+{
+    return ptr[col];
+}
+
+bool operator==(const SpreadSheet& lhv, const SpreadSheet& rhv)
+{
+    if(lhv.row() != rhv.row() || lhv.column() != rhv.column())
+    {
+        return false;
+    }
+    for(size_t i = 0; i < rhv.row(); ++i)
+    {
+        for(size_t j = 0; j < rhv.column(); ++j)
+        {
+            if(std::string(lhv[i][j]) != std::string(rhv[i][j]))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+bool operator!=(const SpreadSheet& lhv, const SpreadSheet& rhv)
+{
+    return !(lhv == rhv);
 }
 
 std::ostream& operator<<(std::ostream& out, const SpreadSheet& ob)
 {
     for(SpreadSheet::size_type i = 0; i < ob.row(); ++i)
     {
-        for(SpreadSheet::size_type j = 0; j < ob.colum(); ++j)
+        for(SpreadSheet::size_type j = 0; j < ob.column(); ++j)
         {
             out << ob.at(i, j) << ' ';
         }

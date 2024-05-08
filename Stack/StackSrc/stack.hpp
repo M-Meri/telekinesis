@@ -188,6 +188,7 @@ bool Stack<T, Container>::operator!=(const Stack& other) const
 template <typename T>
 std::istream& operator>>(std::istream& in, Stack<T>& stack)
 {
+    stack.clear();
     T newval;
     while(in >> newval) 
     {
