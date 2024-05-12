@@ -21,8 +21,8 @@ class Stack
     Stack(const std::initializer_list<value_type>&);
     Stack(const Stack&);
     Stack(Stack&&);
-   // template <typename InputIt>
-   // Stack(InputIt, InputIt);
+    template <typename InputIt>
+    Stack(InputIt, InputIt);
     ~Stack();
 
     const Stack& operator=(const Stack&);
@@ -35,19 +35,13 @@ class Stack
     const_reference top() const;
     bool empty() const;
     size_type size() const;
-    reference peek(size_type);
-    const_reference peek(size_type) const;
-
-    public:
-    reference operator[](size_type index);
-    const_reference operator[](size_type index) const;
+    
     bool operator==(const Stack&) const;
     bool operator!=(const Stack&) const;
     bool operator<(const Stack&)  const;
     bool operator<=(const Stack&) const;
     bool operator>(const Stack&)  const;
     bool operator>=(const Stack&) const;
-
 
     private:
     Container st;
@@ -58,6 +52,6 @@ std::istream& operator>>(std::istream&, Stack<T>&);
 template <typename T>
 std::ostream& operator<<(std::ostream&,  const Stack<T>&);
 
-#include "../StackSrc/stack.hpp"
+#include "stack.hpp"
 
 #endif
