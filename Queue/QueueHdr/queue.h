@@ -22,8 +22,8 @@ class Queue
     Queue(const std::initializer_list<value_type>&);
     Queue(const Queue&);
     Queue(Queue&&);
-   //template <typename InputIt>
-   //Queue(InputIt, InputIt);
+    template <typename InputIt>
+    Queue(InputIt, InputIt);
     ~Queue();
 
     const Queue& operator=(const Queue&);
@@ -39,10 +39,7 @@ class Queue
     const_reference front() const;
     reference back();
     const_reference back() const;
-    const_reference at(size_type) const;
-
-    reference operator[](size_type);
-    const_reference operator[](size_type) const;
+    
     bool operator==(const Queue&) const;
     bool operator!=(const Queue&) const;
     bool operator<(const Queue&) const;
@@ -54,11 +51,6 @@ class Queue
     container_type queue;
 };
 
-template <typename T, typename Container = std::vector<T>>
-std::istream& operator>>(std::istream&, Queue<T, Container>&);
-template <typename T, typename Container = std::vector<T>>
-std::ostream& operator<<(std::ostream&, const Queue<T, Container>&);
-
-#include "../QueueSrc/queue.hpp"
+#include "queue.hpp"
 
 #endif
