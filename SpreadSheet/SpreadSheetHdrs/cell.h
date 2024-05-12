@@ -43,6 +43,9 @@ class Cell
     std::string str;
 };
 
+bool operator==(const Cell&, const Cell&);
+bool operator!=(const Cell&, const Cell&);
+
 std::istream& operator>>(std::istream&, Cell&);
 std::ostream& operator<<(std::ostream&, const Cell&);
 

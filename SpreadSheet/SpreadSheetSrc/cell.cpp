@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
-#include "../SpreadSheetHdrs/cell.h"
+#include <sstream>
+#include "cell.h"
 
 std::istream& operator>>(std::istream& in, std::vector<int>& vec)
 {
@@ -21,7 +22,7 @@ std::ostream& operator<<(std::ostream& out, const std::vector<int>& vec)
 {
     for(size_t i = 0; i < vec.size(); ++i)
     {
-        std::cout << vec[i] << ' ';
+        out << vec[i] << ' ';
     }
     return out;
 }
@@ -32,22 +33,19 @@ Cell::Cell(int val) : str{std::to_string(val)}
 Cell::Cell(double val) : str{std::to_string(val)}
 {}
 
-Cell::Cell(bool val) : str{std::to_string(val)}
-{}
+Cell::Cell(bool val)
+{
+    str = (val == true) ? "true" : "false";
+}
 
 Cell::Cell(char val) : str{val}
 {}
 
 Cell::Cell(const std::vector<int>& vec)
 {
-    if(!vec.empty())
-    {
-        str = std::to_string(vec[0]);
-        for(size_t i = 1; i < vec.size(); ++i)
-        {
-            str += std::to_string(vec[i]);
-        }
-    }
+    std::stringstream ss;
+    ss << vec;
+    str = ss.str();
 }
 
 Cell::Cell(std::string val) : str{val}
@@ -85,13 +83,13 @@ const Cell& Cell::operator=(double rhv)
 
 const Cell& Cell::operator=(bool rhv)
 {
-    str = std::to_string(rhv);
+    str = (rhv == true) ? "true": "false";
     return *this;
 }
 
 const Cell& Cell::operator=(char rhv)
 {
-    str = std::to_string(rhv);
+    str = rhv;
     return *this;
 }
 
@@ -103,15 +101,9 @@ const Cell& Cell::operator=(std::string rhv)
 
 const Cell& Cell::operator=(const std::vector<int>& rhv)
 {
-    str.clear();
-    if(!rhv.empty())
-    {
-        str = std::to_string(rhv[0]);
-        for(size_t i = 1; i < rhv.size(); ++i)
-        {
-            str += std::to_string(rhv[i]);
-        }
-    }
+    std::stringstream ss;
+    ss << rhv;
+    str = ss.str();
     return *this;
 }
 
@@ -122,14 +114,14 @@ Cell::operator int() const
 
 Cell::operator bool() const
 {
-    return static_cast<bool>(std::stoi(str));
+    return (str == "true") ? true : false;
 }
 
 Cell::operator char() const
 {
-    if(str.size() != 0)
+    if(str.size() != 1)
     {
-        throw;
+        return '\0';
     }
     return str[0];
 }
@@ -144,16 +136,34 @@ Cell::operator std::string() const
     return str;
 }
 
+Cell::operator std::vector<int>() const
+{
+    std::vector<int> vec;
+    std::stringstream ss(str);
+    ss >> vec;
+    return vec;
+}
+
+bool operator==(const Cell& lhv, const Cell& rhv)
+{
+    return static_cast<std::string>(lhv) == static_cast<std::string>(rhv);
+}
+
+bool operator!=(const Cell& lhv, const Cell& rhv)
+{
+    return static_cast<std::string>(lhv) != static_cast<std::string>(rhv);
+}
+
 std::istream& operator>>(std::istream& in, Cell& cell)
 {
     std::string str;
     in >> str;
-    cell = Cell(str);
+    cell = static_cast<Cell>(str);
     return in;
 }
 
 std::ostream& operator<<(std::ostream& out, const Cell& cell)
 {
-    out << (std::string)cell;
+    out << static_cast<std::string>(cell);
     return out;
 }

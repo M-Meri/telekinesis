@@ -4,7 +4,7 @@ project(SpreadSheet)
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(SpreadSheetHdrs)
+include_directories(SpreadSheetHdrs SpreadSheetSrc)
 
 add_executable(SpreadSheet 
     SpreadSheetSrc/main.cpp 

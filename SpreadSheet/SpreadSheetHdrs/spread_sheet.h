@@ -27,9 +27,7 @@ class SpreadSheet
 
     const SpreadSheet& operator=(const SpreadSheet&);
     const SpreadSheet& operator=(SpreadSheet&&);
-
-    Cell& at(size_type, size_type);
-    const Cell& at(size_type, size_type) const;
+    
     Row operator[](size_type);
     const Row operator[](size_type) const;
 
@@ -44,13 +42,12 @@ class SpreadSheet
     void delete_col(size_type);
     void removeRows(std::initializer_list<size_type>);
     void removeCols(std::initializer_list<size_type>);
-   // void mirrorH();
-   // void mirrorV();
-   // void mirrorD();
-   // void mirrorSD();
-   // void rotate(int);
+    void mirrorH();
+    void mirrorV();
+    void mirrorD();
+    void mirrorSD();
+    void rotate(int);
 
-    SpreadSheet slice(size_type, size_type);
     SpreadSheet slice(std::initializer_list<size_type>, std::initializer_list<size_type>) const; 
     size_type row() const;
     size_type column() const;

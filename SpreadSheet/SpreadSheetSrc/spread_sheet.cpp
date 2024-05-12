@@ -2,7 +2,7 @@
 #include <string>
 #include <initializer_list>
 #include <iomanip>
-#include "../SpreadSheetHdrs/spread_sheet.h"
+#include "spread_sheet.h"
 
 SpreadSheet::SpreadSheet():cells{nullptr}, x{0}, y{0}
 {}
@@ -94,8 +94,7 @@ const SpreadSheet& SpreadSheet::operator=(const SpreadSheet& rhv)
     if(this != &rhv)
     {
         Cell** tmp = new Cell*[rhv.x];
-        x = rhv.x;
-        for(size_type i = 0; i < x; ++i)
+        for(size_type i = 0; i < rhv.x; ++i)
         {
             tmp[i] = new Cell[rhv.y];
             for(size_type j = 0; j < rhv.y; ++j)
@@ -103,8 +102,9 @@ const SpreadSheet& SpreadSheet::operator=(const SpreadSheet& rhv)
                 tmp[i][j] = rhv.cells[i][j];
             }
         }
-        y = rhv.y;
         clear();
+        y = rhv.y;
+        x = rhv.x;
         cells = tmp;
         tmp = nullptr;
     }
@@ -121,16 +121,6 @@ const SpreadSheet& SpreadSheet::operator=(SpreadSheet&& rhv)
         rhv.y = 0;
     }
     return *this;
-}
-
-Cell& SpreadSheet::at(size_type row, size_type col)
-{
-    return cells[row][col];
-}
-
-const Cell& SpreadSheet::at(size_type row, size_type col) const
-{
-    return cells[row][col];
 }
 
 SpreadSheet::Row SpreadSheet::operator[](size_type row)
@@ -219,69 +209,35 @@ void SpreadSheet::add_col(size_type index, const Cell& val)
     tmp = nullptr;
 }
 
-void SpreadSheet::resize_row(size_type add)
+void SpreadSheet::resize_row(size_type cnt)
 {
-    if(add < x)
-    {
-        for(size_type i = add; i < x; ++i)
-        {
-            delete[] cells[i];
-        }
-        x = add;
-        return;
-    }
-    if(add == x)
-    {
-        return;
-    }
-    Cell** tmp = new Cell*[add];
-    for (size_type i = 0; i < add; ++i)
-    {
-        tmp[i] = new Cell[y];
-        if(i < x)
-        {
-            for(size_type j = 0; j < y; ++j)
-            {
-                tmp[i][j] = cells[i][j];
-            }
-        }
-    }
-    size_type tmpy = y;
-    clear();
-    x = add;
-    y = tmpy;
-    cells = tmp;
-    tmp = nullptr;
+    resize(cnt, y);
 }
 
-void SpreadSheet::resize_col(size_type add)
+void SpreadSheet::resize_col(size_type cnt)
 {
-    if(add <= y)
-    {
-        y = add;
-        return;
-    }
-    Cell** tmp = new Cell*[x];
-    for (size_type i = 0; i < x; ++i)
-    {
-        tmp[i] = new Cell[add];
-        for(size_type j = 0; j < y; ++j)
-        {
-            tmp[i][j] = cells[i][j];
-        }
-    }
-    size_type tmpx = x;
-    clear();
-    y = add;
-    x = tmpx;
-    cells = tmp;
-    tmp = nullptr;
+    resize(x, cnt);
 }
 
 void SpreadSheet::resize(size_type row, size_type col)
 {
-    resize_row(row);
-    resize_col(col);
+    Cell** tmp = new Cell*[row];
+    for(int i = 0; i < row; ++i)
+    {
+        tmp[i] = new Cell[col];
+    }
+    for(int i = 0; i < row && i < x; ++i)
+    {
+        for(int j = 0; j < col && j < y; ++j)
+        {
+            tmp[i][j] = cells[i][j];
+        }
+    }
+    clear();
+    cells = tmp;
+    tmp = nullptr;
+    x = row;
+    y = col;
 }
 
 void SpreadSheet::delete_row(size_type row)
@@ -330,21 +286,59 @@ void SpreadSheet::delete_col(size_type col)
     --y;
 }
 
-SpreadSheet SpreadSheet::slice(size_type from, size_type count)
+void SpreadSheet::mirrorH()
 {
-    if(from + count > x)
+    for(int i = 0; i < x/2; ++i)
     {
-        throw;
-    }
-    SpreadSheet tmp = SpreadSheet(count, y);
-    for(size_type i = 0; i < count; ++i)
-    {
-        for(size_type j = 0; j < y; j++)
+        for(int j = 0; j < y; ++j)
         {
-            tmp.at(i, j) = cells[from + i][j];
+            Cell tmp = cells[i][j];
+            cells[i][j] = cells[x - 1 - i][j];
+            cells[x - 1 - i][j]  = tmp;
         }
     }
-    return tmp;
+}
+
+void SpreadSheet::rotate(int count)
+{
+    int cnt = (count >= 0) ? (count % 4) : (-count % 4);
+    while(cnt--)
+    {
+        Cell** tmp = new Cell*[y];
+        for(int i = 0; i < y; ++i)
+        {
+            tmp[i] = new Cell[x];
+            for(int j = 0; j < x; ++j)
+            {
+                tmp[i][j] = cells[x - 1 - j][i];
+            }
+        }
+        size_t newx = y;
+        size_t newy = x;
+        clear();
+        cells = tmp;
+        x = newx;
+        y = newy;
+        tmp = nullptr;
+    }
+}
+
+void SpreadSheet::mirrorV()
+{
+    rotate(2);
+    mirrorH();
+}
+
+void SpreadSheet::mirrorD()
+{
+    rotate(3);
+    mirrorH();
+}
+
+void SpreadSheet::mirrorSD()
+{
+    rotate(1);
+    mirrorH();
 }
 
 SpreadSheet SpreadSheet::slice(std::initializer_list<size_type> rows, std::initializer_list<size_type> cols) const
@@ -356,7 +350,7 @@ SpreadSheet SpreadSheet::slice(std::initializer_list<size_type> rows, std::initi
         size_type j = 0;
         for(size_type col : cols)
         {
-            tmp[i][j++] = (*this)[row][col];
+            tmp[i][j++] = cells[row][col];
         }
         ++i;
     }
@@ -411,13 +405,45 @@ bool operator!=(const SpreadSheet& lhv, const SpreadSheet& rhv)
 
 std::ostream& operator<<(std::ostream& out, const SpreadSheet& ob)
 {
+    for(SpreadSheet::size_type j = 0; j < ob.column(); ++j)
+            {
+                out << "_________";
+            }
+            out << std::endl;
     for(SpreadSheet::size_type i = 0; i < ob.row(); ++i)
     {
         for(SpreadSheet::size_type j = 0; j < ob.column(); ++j)
         {
-            out << ob.at(i, j) << ' ';
+            out << std::setw(8) << std::left << ob[i][j] << '|';
+        }out << std::endl;
+        if(i != ob.row() - 1)
+        {
+            for(SpreadSheet::size_type j = 0; j < ob.column(); ++j)
+            {
+                out << "--------|";
+            }
+            out << std::endl;
+        } else {
+            for(SpreadSheet::size_type j = 0; j < ob.column(); ++j)
+            {
+                out << "________|";
+            }
+            out << std::endl;
+        }
+    }
+    return out;
+}
+/****
+std::ostream& operator<<(std::ostream& out, const SpreadSheet& ob)
+{
+    for(SpreadSheet::size_type i = 0; i < ob.row(); ++i)
+    {
+        for(SpreadSheet::size_type j = 0; j < ob.column(); ++j)
+        {
+            out << ob[i][j] << ' ';
         }
         out << std::endl;
     }
     return out;
 }
+****/
