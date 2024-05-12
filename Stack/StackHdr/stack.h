@@ -47,11 +47,6 @@ class Stack
     Container st;
 };
 
-template <typename T>
-std::istream& operator>>(std::istream&, Stack<T>&);
-template <typename T>
-std::ostream& operator<<(std::ostream&,  const Stack<T>&);
-
 #include "stack.hpp"
 
 #endif
