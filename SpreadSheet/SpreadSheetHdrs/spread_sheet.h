@@ -33,8 +33,6 @@ class SpreadSheet
 
     public:
     void clear() noexcept;
-    void add_row(size_type, const Cell&);
-    void add_col(size_type, const Cell&);
     void resize_row(size_type);
     void resize_col(size_type);
     void resize(size_type, size_type);
